@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Υπολογιστής Αμοιβής Φωτισμού - Ομάδα</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      background: #1f2937;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+    h1 {
+      color: #fbbf24;
+      text-align: center;
+      font-size: 1.4rem;
+      margin-bottom: 24px;
+    }
+    h2 {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin: 20px 0 12px 0;
+      font-weight: 600;
+    }
+    label {
+      display: block;
+      color: #9ca3af;
+      font-size: 0.875rem;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      background: #374151;
+      border: 1px solid #4b5563;
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #fbbf24;
+    }
+    .team-section {
+      background: #111827;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .team-member {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #1f2937;
+      border-radius: 8px;
+    }
+    .team-member select {
+      flex: 2;
+      margin: 0;
+    }
+    .team-member input {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+    }
+    .team-member .remove-btn {
+      background: #dc2626;
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.2s;
+    }
+    .team-member .remove-btn:hover { background: #b91c1c; }
+    .add-btn {
+      width: 100%;
+      padding: 12px;
+      background: #059669;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+    .add-btn:hover { background: #047857; }
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #374151;
+    }
+    .checkbox-wrapper input {
+      width: auto;
+      margin: 0 10px 0 0;
+    }
+    .checkbox-wrapper label {
+      color: #9ca3af;
+      font-size: 0.85rem;
+    }
+    .member-header {
+      display: flex;
+      gap: 10px;
+      padding: 0 10px;
+      margin-bottom: 8px;
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+    .member-header span:nth-child(1) { flex: 2; }
+    .member-header span:nth-child(2) { flex: 1; text-align: center; }
+    .member-header span:nth-child(3) { width: 36px; }
+    .results {
+      background: #111827;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 16px;
+      display: none;
+    }
+    .results.show { display: block; }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 0.9rem;
+    }
+    .row-label { color: #9ca3af; }
+    .row-value { color: white; font-weight: 500; }
+    .breakdown {
+      background: #1f2937;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 12px 0;
+    }
+    .breakdown-title {
+      color: #9ca3af;
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+    }
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 0.85rem;
+      color: #d1d5db;
+      border-bottom: 1px solid #374151;
+    }
+    .breakdown-item:last-child { border-bottom: none; }
+    .total {
+      border-top: 1px solid #374151;
+      margin-top: 12px;
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .total-label { color: #fbbf24; font-size: 1.1rem; font-weight: 700; }
+    .total-value { color: #fbbf24; font-size: 1.3rem; font-weight: 700; }
+    .categories {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #374151;
+    }
+    .categories h3 {
+      color: #6b7280;
+      font-size: 0.75rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .categories ul {
+      list-style: none;
+      color: #6b7280;
+      font-size: 0.75rem;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💡 Υπολογιστής Αμοιβής Φωτισμού</h1>
+    
+    <label for="sqm">Συνολικά Τετραγωνικά Έργου (m²)</label>
+    <input type="number" id="sqm" placeholder="π.χ. 5000" oninput="calculate()">
+    
+    <div class="team-section">
+      <h2>👥 Ομάδα Έργου</h2>
+      <div class="member-header">
+        <span>Επίπεδο</span>
+        <span>Ποσοστό %</span>
+        <span></span>
+      </div>
+      <div id="team-members"></div>
+      <button class="add-btn" onclick="addMember()">+ Προσθήκη Μέλους</button>
+      
+      <div class="checkbox-wrapper">
+        <input type="checkbox" id="apply-minimums" checked onchange="toggleMinimums()">
+        <label for="apply-minimums">Εφαρμογή ελάχιστων χρεώσεων ανά μέλος</label>
+      </div>
+    </div>
+    
+    <div class="results" id="results">
+      <div class="row">
+        <span class="row-label">Κατηγορία Έργου:</span>
+        <span class="row-value" id="category"></span>
+      </div>
+      <div class="row">
+        <span class="row-label">Συνολικά m²:</span>
+        <span class="row-value" id="total-sqm"></span>
+      </div>
+      
+      <div class="breakdown">
+        <div class="breakdown-title">Ανάλυση ανά μέλος:</div>
+        <div id="breakdown"></div>
+      </div>
+      
+      <div class="total">
+        <span class="total-label">Συνολική Αμοιβή:</span>
+        <span class="total-value" id="total"></span>
+      </div>
+    </div>
+    
+    <div class="categories">
+      <h3>Κατηγορίες Έργων:</h3>
+      <ul>
+        <li>• Μικρό: &lt; 2.000 m²</li>
+        <li>• Μεσαίο: 2.000–10.000 m²</li>
+        <li>• Μεγάλο: 10.000–50.000 m²</li>
+        <li>• Πολύ Μεγάλο: &gt; 50.000 m²</li>
+      </ul>
+      <h3 style="margin-top: 12px;">Ελάχιστες Χρεώσεις:</h3>
+      <ul>
+        <li>• Junior: 1.500€</li>
+        <li>• Mid-level: 2.500€</li>
+        <li>• Senior: 3.500€</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const rates = {
+      'Μικρό': { 'Junior': 5, 'Mid-level': 7, 'Senior': 10.5 },
+      'Μεσαίο': { 'Junior': 3.15, 'Mid-level': 4.4, 'Senior': 6.5 },
+      'Μεγάλο': { 'Junior': 1.9, 'Mid-level': 2.65, 'Senior': 3.9 },
+      'Πολύ Μεγάλο': { 'Junior': 1.1, 'Mid-level': 1.55, 'Senior': 2.3 }
+    };
+
+    const minimums = { 'Junior': 1500, 'Mid-level': 2500, 'Senior': 3500 };
+
+    let members = [{ level: 'Mid-level', percent: 100 }];
+    let applyMinimums = true;
+
+    function getCategory(m2) {
+      if (m2 < 2000) return 'Μικρό';
+      if (m2 < 10000) return 'Μεσαίο';
+      if (m2 < 50000) return 'Μεγάλο';
+      return 'Πολύ Μεγάλο';
+    }
+
+    function formatNum(n) {
+      return n.toLocaleString('el-GR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderMembers() {
+      const container = document.getElementById('team-members');
+      container.innerHTML = members.map((m, i) => `
+        <div class="team-member">
+          <select onchange="updateMember(${i}, 'level', this.value)">
+            <option value="Junior" ${m.level === 'Junior' ? 'selected' : ''}>Junior (28–35€/ώρα)</option>
+            <option value="Mid-level" ${m.level === 'Mid-level' ? 'selected' : ''}>Mid-level (38–50€/ώρα)</option>
+            <option value="Senior" ${m.level === 'Senior' ? 'selected' : ''}>Senior (55–75€/ώρα)</option>
+          </select>
+          <input type="number" value="${m.percent}" min="0" max="100" onchange="updateMember(${i}, 'percent', this.value)">
+          <button class="remove-btn" onclick="removeMember(${i})" ${members.length === 1 ? 'disabled style="opacity:0.5"' : ''}>×</button>
+        </div>
+      `).join('');
+    }
+
+    function addMember() {
+      members.push({ level: 'Junior', percent: 0 });
+      renderMembers();
+      calculate();
+    }
+
+    function removeMember(i) {
+      if (members.length > 1) {
+        members.splice(i, 1);
+        renderMembers();
+        calculate();
+      }
+    }
+
+    function updateMember(i, field, value) {
+      members[i][field] = field === 'percent' ? parseFloat(value) || 0 : value;
+      calculate();
+    }
+
+    function toggleMinimums() {
+      applyMinimums = document.getElementById('apply-minimums').checked;
+      calculate();
+    }
+
+    function calculate() {
+      const sqm = parseFloat(document.getElementById('sqm').value) || 0;
+      const resultsDiv = document.getElementById('results');
+
+      const totalPercent = members.reduce((sum, m) => sum + m.percent, 0);
+
+      if (sqm <= 0 || totalPercent === 0) {
+        resultsDiv.classList.remove('show');
+        return;
+      }
+
+      const category = getCategory(sqm);
+      let totalFee = 0;
+      let breakdownHTML = '';
+
+      members.forEach((m, i) => {
+        if (m.percent > 0) {
+          const memberSqm = sqm * (m.percent / 100);
+          const rate = rates[category][m.level];
+          const calculatedFee = memberSqm * rate;
+          const minFee = minimums[m.level];
+          const fee = applyMinimums ? Math.max(calculatedFee, minFee) : calculatedFee;
+          const minApplied = applyMinimums && calculatedFee < minFee;
+          totalFee += fee;
+
+          const levelName = m.level === 'Junior' ? 'Junior' : m.level === 'Mid-level' ? 'Mid-level' : 'Senior';
+          breakdownHTML += `
+            <div class="breakdown-item">
+              <span>${levelName} (${m.percent}% → ${formatNum(memberSqm)} m² × ${rate.toFixed(2)}€)</span>
+              <span>${formatNum(fee)}€${minApplied ? ' ⚠️' : ''}</span>
+            </div>
+          `;
+          if (minApplied) {
+            breakdownHTML += `
+              <div class="breakdown-item" style="color: #fbbf24; font-size: 0.75rem; padding-left: 10px;">
+                ↳ Ελάχιστη χρέωση ${levelName}: ${formatNum(minFee)}€ (αντί ${formatNum(calculatedFee)}€)
+              </div>
+            `;
+          }
+        }
+      });
+
+      if (totalPercent !== 100) {
+        breakdownHTML += `
+          <div class="breakdown-item" style="color: #fbbf24; font-size: 0.8rem;">
+            ⚠️ Προσοχή: Το σύνολο των ποσοστών είναι ${totalPercent}% (όχι 100%)
+          </div>
+        `;
+      }
+
+      document.getElementById('category').textContent = category;
+      document.getElementById('total-sqm').textContent = sqm.toLocaleString('el-GR') + ' m²';
+      document.getElementById('breakdown').innerHTML = breakdownHTML;
+      document.getElementById('total').textContent = formatNum(totalFee) + '€';
+      resultsDiv.classList.add('show');
+    }
+
+    // Initialize
+    renderMembers();
+  </script>
+</body>
+</html>
